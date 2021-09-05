@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "deploy": "npm run build && npm run deploy:upload",
+    "deploy:upload": "rsync -av --delete -e 'ssh -i ~/.ssh/dbwebb' dist/ manh20@ssh.student.bth.se:www/editor"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.4.1",
