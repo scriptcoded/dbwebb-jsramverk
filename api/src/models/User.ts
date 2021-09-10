@@ -5,7 +5,7 @@ import { documentSchema } from './Document'
 export interface User {
   username: string;
   documents: Document[];
-  password?: string;
+  password: string;
 }
 
 export const userSchema = new Schema<User>({

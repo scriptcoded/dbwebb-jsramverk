@@ -10,6 +10,7 @@ export function buildRouter (): express.Router {
   const router = asyncRouter()
 
   router.post('/auth/register', authController.register)
+  router.post('/auth/login', authController.login)
 
   return router
 }

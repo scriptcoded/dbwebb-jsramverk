@@ -3,12 +3,16 @@ import cors from 'cors'
 import pinoLogger from 'express-pino-logger'
 import Container from 'typedi'
 import { json } from 'body-parser'
+import passport from 'passport'
+import session from 'express-session'
 
 import { LOGGER_TOKEN } from './loaders/logger'
 import { errorHandler } from './middleware/errorHandler'
 import { buildRouter } from './router'
+import { CONFIG_TOKEN } from './loaders/config'
 
 export function buildApp (): express.Express {
+  const config = Container.get(CONFIG_TOKEN)
   const logger = Container.get(LOGGER_TOKEN)
 
   const app = express()
@@ -22,6 +26,15 @@ export function buildApp (): express.Express {
   ))
 
   app.use(cors())
+
+  app.use(session({
+    secret: config.appKeys,
+    resave: true,
+    saveUninitialized: true
+  }))
+
+  app.use(passport.initialize())
+  app.use(passport.session())
 
   app.use(buildRouter())
 

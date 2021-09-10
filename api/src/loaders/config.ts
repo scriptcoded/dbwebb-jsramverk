@@ -3,6 +3,8 @@ import Container, { Token } from 'typedi'
 export interface Config {
   port: string;
 
+  appKeys: string[];
+
   databaseURL: string;
 }
 
@@ -32,6 +34,8 @@ function getEnvVar <T = string> (name: string, fallback?: T) {
 export function loadConfig (): void {
   const config: Config = {
     port: getEnvVar('PORT'),
+
+    appKeys: getEnvVar('APP_KEYS').split(','),
 
     databaseURL: getEnvVar('DATABASE_URL')
   }
