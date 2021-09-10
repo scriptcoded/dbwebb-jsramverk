@@ -19,13 +19,15 @@ export class AuthController {
     private userService: UserService
   ) { }
 
-  public async register (req: Request, res: Response): Promise<void> {
-    const body = await validateRequest(CreateUserDTO, req)
+  public register = [
+    async (req: Request, res: Response): Promise<void> => {
+      const body = await validateRequest(CreateUserDTO, req)
 
-    console.log(body)
+      const user = await this.userService.createUser(body)
 
-    res.send({
-      data: 'oke'
-    })
-  }
+      res.send({
+        data: user
+      })
+    }
+  ]
 }

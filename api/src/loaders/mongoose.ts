@@ -7,6 +7,7 @@ export async function connectMongoose (): Promise<void> {
   const config = Container.get(CONFIG_TOKEN)
 
   await connect(config.databaseURL, {
-    authSource: 'admin'
+    authSource: 'admin',
+    autoIndex: true
   })
 }
