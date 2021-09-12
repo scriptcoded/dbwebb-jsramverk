@@ -5,6 +5,7 @@ import passport from 'passport'
 
 import { UserService } from '@/services/UserService'
 import { validateRequest } from '@/helpers/validate'
+import { auth } from '@/middleware/auth'
 
 class CreateUserDTO {
   @IsString()
@@ -23,9 +24,7 @@ export class AuthController {
   public login = [
     passport.authenticate('local'),
     async (req: Request, res: Response): Promise<void> => {
-      res.send({
-        data: 'hi'
-      })
+      res.send({})
     }
   ]
 
@@ -37,6 +36,15 @@ export class AuthController {
 
       res.send({
         data: user
+      })
+    }
+  ]
+
+  public me = [
+    auth(),
+    async (req: Request, res: Response): Promise<void> => {
+      res.send({
+        ok: true
       })
     }
   ]

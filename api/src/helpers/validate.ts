@@ -6,8 +6,6 @@ import { Request } from 'express'
 export async function validateRequest<T extends ClassConstructor<any>> (cls: T, req: Request): Promise<InstanceType<T>> {
   const dataClass = plainToClass(cls, req.body)
 
-  console.log(dataClass)
-
   const errors = await validate(dataClass, {
     whitelist: true,
     forbidNonWhitelisted: true,
