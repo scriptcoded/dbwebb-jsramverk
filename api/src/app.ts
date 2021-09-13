@@ -25,7 +25,11 @@ export function buildApp (): express.Express {
     logger
   ))
 
-  app.use(cors())
+  app.use(cors({
+    // Bad practice, but OK for development
+    origin: (origin, callback) => callback(null, origin),
+    credentials: true
+  }))
 
   app.use(session({
     secret: config.appKeys,

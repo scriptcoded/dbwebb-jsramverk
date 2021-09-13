@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose'
 
 export interface Document {
+  _id: string;
   name: string;
   content: string;
 }

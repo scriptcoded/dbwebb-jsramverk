@@ -7,8 +7,6 @@ import NavBar from './components/NavBar.vue'
   <div class="bg-gray-50 min-h-screen pt-16">
     <NavBar />
 
-    <div class="max-w-5xl mx-auto pt-8 px-4">
-      <router-view />
-    </div>
+    <router-view />
   </div>
 </template>

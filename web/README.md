@@ -1,3 +1,3 @@
-# Realtime Talk
+# Realtime Text
 
 A real-time text editor

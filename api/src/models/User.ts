@@ -3,6 +3,7 @@ import { Document, model, Schema } from 'mongoose'
 import { documentSchema } from './Document'
 
 export interface User {
+  _id: string;
   username: string;
   documents: Document[];
   password: string;
