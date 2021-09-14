@@ -34,7 +34,11 @@ export function buildApp (): express.Express {
   app.use(session({
     secret: config.appKeys,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+      sameSite: 'none',
+      secure: config.isProduction
+    }
   }))
 
   app.use(passport.initialize())

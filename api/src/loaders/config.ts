@@ -6,6 +6,8 @@ export interface Config {
   appKeys: string[];
 
   databaseURL: string;
+
+  isProduction: boolean;
 }
 
 export const CONFIG_TOKEN = new Token<Config>('CONFIG')
@@ -37,7 +39,9 @@ export function loadConfig (): void {
 
     appKeys: getEnvVar('APP_KEYS').split(','),
 
-    databaseURL: getEnvVar('DATABASE_URL')
+    databaseURL: getEnvVar('DATABASE_URL'),
+
+    isProduction: process.env.NODE_ENV === 'production'
   }
 
   Container.set(CONFIG_TOKEN, config)
