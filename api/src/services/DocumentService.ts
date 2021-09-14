@@ -1,9 +1,17 @@
 import { Service } from 'typedi'
 import { notFound } from '@hapi/boom'
-import { Document } from 'mongoose'
 
 import { UserModel } from '@/models/User'
-import { DocumentModel } from '@/models/Document'
+import { Document, DocumentModel } from '@/models/Document'
+
+export interface GetDocumentsInput {
+  userID: string;
+}
+
+export interface GetDocumentInput {
+  documentID: string;
+  userID: string;
+}
 
 export interface CreateDocumentInput {
   userID: string;
@@ -18,12 +26,32 @@ export interface UpdateDocumentInput {
   content?: string;
 }
 
-export interface GetDocumentsInput {
+export interface DeleteDocumentInput {
+  documentID: string;
   userID: string;
 }
 
 @Service()
 export class DocumentService {
+  async getDocuments (data: GetDocumentsInput): Promise<Document[]> {
+    const { userID } = data
+
+    const user = await UserModel.findById(userID)
+    if (!user) throw notFound('User not found')
+
+    return user.documents
+  }
+
+  async getDocument (data: GetDocumentInput): Promise<Document> {
+    const { documentID, userID } = data
+
+    const user = await UserModel.findById(userID)
+    const document = user?.documents.find(d => d.id === documentID)
+    if (!document || !user) throw notFound('Document not found')
+
+    return document
+  }
+
   async createDocument (data: CreateDocumentInput): Promise<Document> {
     const { userID, name, content } = data
 
@@ -47,24 +75,31 @@ export class DocumentService {
     // lot easier than building an access control layer above.
     const { documentID, userID, name, content } = data
 
-    const document = await DocumentModel.findById(documentID)
-    const user = await document?.$parent()
-    if (!document || user?.id !== userID) throw notFound('Document not found')
+    const user = await UserModel.findById(userID)
+    console.log(user?.documents)
+    const document = user?.documents.find(d => d._id.toString() === documentID.toString())
+    if (!document || !user) throw notFound('Document not found')
 
     document.name = name ?? document.name
     document.content = content ?? document.content
 
-    await document.save()
+    await user.save()
 
     return document
   }
 
-  async getDocuments (data: GetDocumentsInput): Promise<Document[]> {
-    const { userID } = data
+  async deleteDocument (data: DeleteDocumentInput): Promise<void> {
+    // It's not ideal to handle access control inside the service, but it's a
+    // lot easier than building an access control layer above.
+    const { documentID, userID } = data
 
     const user = await UserModel.findById(userID)
-    if (!user) throw notFound('User not found')
+    console.log(user?.documents)
+    const document = user?.documents.find(d => d._id.toString() === documentID.toString())
+    if (!document || !user) throw notFound('Document not found')
 
-    return user.documents
+    user.documents = user.documents.filter(d => d._id.toString() !== documentID.toString())
+
+    await user.save()
   }
 }

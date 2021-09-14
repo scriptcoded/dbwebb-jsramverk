@@ -56,6 +56,7 @@ const submitForm = async () => {
         placeholder="Username"
         type="text"
         name="username"
+        autofocus
       />
       <BaseInput
         v-model="password"

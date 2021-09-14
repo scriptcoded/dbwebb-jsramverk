@@ -16,9 +16,11 @@ export function buildRouter (): express.Router {
   router.post('/auth/logout', authController.logout)
   router.get('/auth/me', authController.me)
 
+  router.get('/documents', documentController.getAll)
+  router.get('/documents/:id', documentController.getOne)
   router.post('/documents', documentController.create)
   router.patch('/documents/:id', documentController.update)
-  router.get('/documents', documentController.getAll)
+  router.delete('/documents/:id', documentController.delete)
 
   return router
 }

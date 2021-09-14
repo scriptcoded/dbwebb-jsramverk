@@ -1,6 +1,6 @@
-import { Document, model, Schema } from 'mongoose'
+import { model, Schema } from 'mongoose'
 
-import { documentSchema } from './Document'
+import { Document, documentSchema } from './Document'
 
 export interface User {
   _id: string;

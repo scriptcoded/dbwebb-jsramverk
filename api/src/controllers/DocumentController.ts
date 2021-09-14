@@ -35,6 +35,35 @@ export class DocumentController {
     private documentService: DocumentService
   ) {}
 
+  public getAll = [
+    auth(),
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const documents = await this.documentService.getDocuments({
+        userID: req.user._id
+      })
+
+      res.send({
+        data: documents
+      })
+    }
+  ]
+
+  public getOne = [
+    auth(),
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const document = await this.documentService.getDocument({
+        documentID: req.params.id,
+        userID: req.user._id
+      })
+
+      res.send({
+        data: document
+      })
+    }
+  ]
+
   public create = [
     auth(),
     async (origReq: Request, res: Response): Promise<void> => {
@@ -70,17 +99,17 @@ export class DocumentController {
     }
   ]
 
-  public getAll = [
+  public delete = [
     auth(),
     async (origReq: Request, res: Response): Promise<void> => {
       const req = origReq as AuthenticatedRequest
-      const documents = await this.documentService.getDocuments({
+
+      await this.documentService.deleteDocument({
+        documentID: req.params.id,
         userID: req.user._id
       })
 
-      res.send({
-        data: documents
-      })
+      res.send({ })
     }
   ]
 }
