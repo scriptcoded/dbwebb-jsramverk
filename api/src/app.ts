@@ -38,8 +38,11 @@ export function buildApp (): express.Express {
     cookie: {
       sameSite: 'none',
       secure: config.isProduction
-    }
+    },
+    proxy: true
   }))
+
+  app.set('trust proxy', 2)
 
   app.use(passport.initialize())
   app.use(passport.session())
