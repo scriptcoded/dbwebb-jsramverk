@@ -14,7 +14,7 @@ export const useAuth = () => {
     try {
       user.value = await auth.getUser()
     } catch (e) {
-      if (e.status !== 401) {
+      if ((e as any).status !== 401) {
         throw e
       }
     }

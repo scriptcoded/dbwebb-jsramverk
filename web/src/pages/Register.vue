@@ -27,7 +27,7 @@ const submitForm = async () => {
 
     router.push('/login')
   } catch (e) {
-    error.value = e
+    error.value = e as Error
   }
 }
 
