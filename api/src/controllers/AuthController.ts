@@ -21,13 +21,6 @@ export class AuthController {
     private userService: UserService
   ) {}
 
-  public login = [
-    passport.authenticate('local'),
-    async (req: Request, res: Response): Promise<void> => {
-      res.send({})
-    }
-  ]
-
   public register = [
     async (req: Request, res: Response): Promise<void> => {
       const body = await validateRequest(CreateUserDTO, req)
@@ -37,6 +30,20 @@ export class AuthController {
       res.send({
         data: user
       })
+    }
+  ]
+
+  public login = [
+    passport.authenticate('local'),
+    async (req: Request, res: Response): Promise<void> => {
+      res.send({})
+    }
+  ]
+
+  public logout = [
+    async (req: Request, res: Response): Promise<void> => {
+      req.logout()
+      res.send({})
     }
   ]
 

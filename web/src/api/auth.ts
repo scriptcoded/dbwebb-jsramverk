@@ -8,8 +8,8 @@ export function register (data: any) {
   return httpClient.post('/auth/register', data)
 }
 
-export function logout (data: any) {
-  return httpClient.post('/auth/logout', data)
+export function logout () {
+  return httpClient.post('/auth/logout')
 }
 
 export function getUser () {

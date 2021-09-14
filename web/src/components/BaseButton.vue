@@ -17,7 +17,7 @@ const tagName = computed(() => to.value ? 'router-link' : 'button')
   <component
     :is="tagName"
     :to="to"
-    class="flex justify-center items-center px-4 py-2 text-lg bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-400 text-white rounded-md cursor-pointer"
+    class="h-11 flex justify-center items-center px-4 text-lg bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-400 text-white rounded-md cursor-pointer"
   >
     <slot />
   </component>

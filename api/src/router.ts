@@ -13,6 +13,7 @@ export function buildRouter (): express.Router {
 
   router.post('/auth/register', authController.register)
   router.post('/auth/login', authController.login)
+  router.post('/auth/logout', authController.logout)
   router.get('/auth/me', authController.me)
 
   router.post('/documents', documentController.create)

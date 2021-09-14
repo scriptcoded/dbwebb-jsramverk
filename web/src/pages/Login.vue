@@ -49,17 +49,19 @@ const submitForm = async () => {
 
     <form
       class="flex flex-col w-full space-y-3"
-      @submit="submitForm"
+      @submit.prevent="submitForm"
     >
       <BaseInput
         v-model="username"
         placeholder="Username"
         type="text"
+        name="username"
       />
       <BaseInput
         v-model="password"
         placeholder="Password"
         type="password"
+        name="password"
       />
       <BaseButton type="submit">
         Sign in
