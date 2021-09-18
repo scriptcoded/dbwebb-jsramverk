@@ -12,9 +12,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      dir: ./backend
 
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install dependencies
+        working-directory: ${{env.dir}}
+        run: npm install
+
       - name: Run tests
+        working-directory: ${{env.dir}}
         run: npm run test
