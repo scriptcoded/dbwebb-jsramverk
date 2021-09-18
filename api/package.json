@@ -7,11 +7,11 @@
     "dev": "ts-node-dev --transpile-only --max_old_space_size=8192 --files -r tsconfig-paths/register -r dotenv/config src/index.ts | pino-pretty",
     "build": "npm install --production=false && rimraf dist && tsc && tsc-alias",
     "start": "node -r dotenv/config dist | pino-pretty",
+    "jest": "jest --maxWorkers=1",
     "test": "run-s test:*",
     "test:lint": "eslint src",
     "test:ts-lint": "tsc --noEmit",
-    "test:jest": "jest --maxWorkers=1",
-    "coverage": "jest --maxWorkers=1 --coverage"
+    "test:coverage": "jest --maxWorkers=1 --coverage"
   },
   "author": "Malcolm Nihlén <malcolm.nihlen@gmail.com>",
   "license": "ISC",

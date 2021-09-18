@@ -28,3 +28,11 @@ jobs:
       - name: Run tests
         working-directory: ${{env.dir}}
         run: npm run test
+
+      - name: Deploy coverage report to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: api/coverage/lcov-report
+          target-folder: api-coverage
+          commit-message: 'docs(api): coverage report'
