@@ -11,7 +11,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   process.env = { ...origEnv }
-  Container.reset(CONFIG_TOKEN)
+  Container.remove(CONFIG_TOKEN)
 })
 
 test('should load config', () => {
