@@ -1,5 +1,6 @@
 
 [![Test backend](https://github.com/scriptcoded/dbwebb-jsramverk/actions/workflows/test-backend.yml/badge.svg)](https://github.com/scriptcoded/dbwebb-jsramverk/actions/workflows/test-backend.yml)
+[![Coverage](https://badgen.net/badge/coverage/show/blue)](https://scriptcoded.github.io/dbwebb-jsramverk/api-coverage/index.html)
 
 # OBS! Om CI-kedjean
 
