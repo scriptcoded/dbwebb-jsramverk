@@ -4,13 +4,11 @@ class MongoError extends Error {
   code?: number
 }
 
-function createMongoError (code?: number): MongoError {
+function createMongoError (code?: number) {
   const error = new MongoError()
   error.name = 'MongoServerError'
 
-  if (code) {
-    error.code = code
-  }
+  if (code) { error.code = code }
 
   return error
 }
