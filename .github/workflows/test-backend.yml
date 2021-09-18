@@ -13,7 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      dir: ./backend
+      dir: ./api
 
     steps:
       - uses: actions/checkout@v2
