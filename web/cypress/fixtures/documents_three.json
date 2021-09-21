@@ -1,0 +1,7 @@
+{
+  "data":[
+    { "name": "First Document", "content": "This is a document", "_id": "xxx1" },
+    { "name": "Second Document", "content": "This is another document", "_id": "xxx2" },
+    { "name": "Third Document", "content": "Finally comes this", "_id": "xxx3" }
+  ]
+}

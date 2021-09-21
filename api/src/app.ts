@@ -36,10 +36,10 @@ export function buildApp (): express.Express {
     resave: true,
     saveUninitialized: true,
     cookie: {
-      sameSite: 'none',
+      sameSite: config.isProduction ? 'none' : undefined,
       secure: config.isProduction
     },
-    proxy: true
+    proxy: config.isProduction
   }))
 
   app.set('trust proxy', 2)

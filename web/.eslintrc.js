@@ -5,7 +5,8 @@ module.exports = {
   },
   extends: [
     'plugin:vue/vue3-recommended',
-    'standard'
+    'standard',
+    'plugin:cypress/recommended'
   ],
   parserOptions: {
     ecmaVersion: 12,
@@ -14,7 +15,8 @@ module.exports = {
   },
   plugins: [
     'vue',
-    '@typescript-eslint'
+    '@typescript-eslint',
+    'cypress'
   ],
   rules: {
     'vue/block-lang': ['error', {
@@ -27,6 +29,7 @@ module.exports = {
     defineProps: true,
     defineEmits: true,
     defineExpose: true,
-    withDefaults: true
+    withDefaults: true,
+    "cypress/globals": true
   }
 }

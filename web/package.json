@@ -6,13 +6,17 @@
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "deploy": "npm run build && npm run deploy:upload",
-    "deploy:upload": "rsync -av --delete -e 'ssh -i ~/.ssh/dbwebb' dist/ manh20@ssh.student.bth.se:www/editor"
+    "deploy:upload": "rsync -av --delete -e 'ssh -i ~/.ssh/dbwebb' dist/ manh20@ssh.student.bth.se:www/editor",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test": "start-server-and-test dev http-get://localhost:3000 cypress:run"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/typography": "^0.4.1",
     "@tiptap/starter-kit": "^2.0.0-beta.101",
     "@tiptap/vue-3": "^2.0.0-beta.56",
+    "eslint-plugin-cypress": "^2.12.1",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11"
   },
@@ -22,6 +26,7 @@
     "@vitejs/plugin-vue": "^1.6.0",
     "@vue/compiler-sfc": "^3.2.6",
     "autoprefixer": "^10.3.4",
+    "cypress": "^8.4.1",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",
@@ -29,6 +34,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-vue": "^7.17.0",
     "postcss": "^8.3.6",
+    "start-server-and-test": "^1.14.0",
     "tailwindcss": "^2.2.9",
     "typescript": "^4.3.2",
     "vite": "^2.5.2",
