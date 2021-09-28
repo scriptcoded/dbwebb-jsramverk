@@ -11,7 +11,7 @@ export const loadConfig = () => {
     }
   } else {
     config = {
-      apiURL: 'https://jsramverk-api-manh20.azurewebsites.net/'
+      apiURL: 'https://jsramverk-api-manh20.azurewebsites.net'
     }
   }
 }

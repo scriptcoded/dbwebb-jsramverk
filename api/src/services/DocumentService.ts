@@ -76,7 +76,6 @@ export class DocumentService {
     const { documentID, userID, name, content } = data
 
     const user = await UserModel.findById(userID)
-    console.log(user?.documents)
     const document = user?.documents.find(d => d._id.toString() === documentID.toString())
     if (!document || !user) throw notFound('Document not found')
 
@@ -94,7 +93,6 @@ export class DocumentService {
     const { documentID, userID } = data
 
     const user = await UserModel.findById(userID)
-    console.log(user?.documents)
     const document = user?.documents.find(d => d._id.toString() === documentID.toString())
     if (!document || !user) throw notFound('Document not found')
 

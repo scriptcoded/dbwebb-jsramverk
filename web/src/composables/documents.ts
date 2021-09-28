@@ -39,11 +39,25 @@ export function useDocuments () {
     return response.data
   }
 
+  const updateUserDocumentLocal = async (documentID: string, data: UpdateDocumentInput): Promise<Document> => {
+    const document = documents.value.find(d => d._id === documentID)
+
+    if (!document) {
+      throw new Error('Document not found')
+    }
+
+    document.content = data.content ?? document.content
+    document.name = data.name ?? document.name
+
+    return document
+  }
+
   return {
     documents,
     getUserDocuments,
     createUserDocument,
-    updateUserDocument
+    updateUserDocument,
+    updateUserDocumentLocal
   }
 }
 
@@ -56,9 +70,12 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
   const dirty = ref(false)
 
   watch(storedDocument, () => {
+    console.log('B')
     document.value = storedDocument.value
       ? { ...storedDocument.value }
       : null
+  }, {
+    deep: true
   })
 
   watch(document, () => {

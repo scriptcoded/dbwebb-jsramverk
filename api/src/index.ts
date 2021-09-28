@@ -2,11 +2,10 @@ import 'reflect-metadata'
 
 import Container from 'typedi'
 
-import { buildApp } from './app'
 import { load } from './loaders'
 import { CONFIG_TOKEN } from './loaders/config'
+import { HTTP_TOKEN } from './loaders/express'
 import { LOGGER_TOKEN } from './loaders/logger'
-import { errorHandler } from './middleware/errorHandler'
 
 async function start () {
   // Run all loaders
@@ -16,14 +15,12 @@ async function start () {
   const logger = Container.get(LOGGER_TOKEN)
 
   // Create the Express app instance
-  const app = buildApp()
+  const httpServer = Container.get(HTTP_TOKEN)
 
   // Start the app
-  app.listen(config.port, () => {
+  httpServer.listen(config.port, () => {
     logger.info(`Server started on port ${config.port}`)
   })
-
-  app.use(errorHandler())
 }
 
 // Make sure to catch errors when starting the application.

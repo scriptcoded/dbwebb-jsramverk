@@ -1,34 +1,77 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import RealTimeEditor from '../components/realTimeEditor/TextEditor.vue'
 import DocumentList from '../components/DocumentList.vue'
 import LoginPrompt from '../components/LoginPrompt.vue'
 import { useAuth } from '../composables/auth'
-import { useDocument } from '../composables/documents'
+import { useDocument, useDocuments } from '../composables/documents'
 import BaseInput from '../components/BaseInput.vue'
 import BaseButton from '../components/BaseButton.vue'
 
+import { io, Socket } from 'socket.io-client'
+import { config } from '../config'
+
 const activeDocument = ref<string | null>(null)
 
-const { document, dirty, save, destroy } = useDocument(activeDocument)
+const { document, destroy } = useDocument(activeDocument)
+const { updateUserDocumentLocal } = useDocuments()
 
 const characterCount = ref(0)
 const wordCount = ref(0)
 
-const activateDocument = (id: string) => {
-  if (dirty.value) {
-    const ok = window.confirm('You have unsaved changes. Are you sure you want to continue?')
+let socket: Socket
 
-    if (!ok) {
-      return
-    }
-  }
+const connectSocket = () => {
+  socket = io(config.apiURL, {
+    reconnection: true,
+    reconnectionDelay: 500,
+    jsonp: false,
+    reconnectionAttempts: Infinity,
+    transports: ['websocket']
+  })
 
-  activeDocument.value = id
+  socket.on('connect', () => {
+    console.log(socket.id)
+  })
+
+  socket.on('connect_error', (e) => {
+    console.log('Socket.io connection error:', e)
+  })
+
+  socket.on('updatedDoc', (doc) => {
+    if (!document.value) { return }
+
+    updateUserDocumentLocal(doc._id, {
+      content: doc.content,
+      name: doc.name
+    })
+  })
+}
+onMounted(connectSocket)
+
+const broadcastDocument = () => {
+  if (!document.value) { return }
+  socket.emit('updateDoc', document.value)
+
+  updateUserDocumentLocal(document.value._id, {
+    content: document.value.content,
+    name: document.value.name
+  })
 }
 
-const onSave = async () => {
-  await save()
+watch(document, (doc, oldDoc) => {
+  if (doc && doc?._id === oldDoc?._id) {
+    console.log('Broadcasting', doc)
+    broadcastDocument()
+  }
+}, {
+  deep: true
+})
+
+const activateDocument = (id: string) => {
+  activeDocument.value = id
+
+  socket.emit('joinDoc', id)
 }
 
 const destroyDocument = async () => {
@@ -65,7 +108,6 @@ const { user } = useAuth()
         v-model:content="document.content"
         v-model:characterCount="characterCount"
         v-model:wordCount="wordCount"
-        @save="onSave"
       />
     </div>
 

@@ -8,8 +8,6 @@ defineProps<{
   editor: Editor
 }>()
 
-const emit = defineEmits(['save'])
-
 </script>
 
 <template>
@@ -83,12 +81,6 @@ const emit = defineEmits(['save'])
       <TextEditorNavbarButton
         icon="fas fa-redo"
         @click="editor.chain().focus().redo().run()"
-      />
-      <TextEditorNavbarDivider />
-      <TextEditorNavbarButton
-        icon="fas fa-save"
-        text="Save"
-        @click="emit('save')"
       />
     </div>
   </div>
