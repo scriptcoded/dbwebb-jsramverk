@@ -1,6 +1,6 @@
 import { Service } from 'typedi'
 import { Request, Response } from 'express'
-import { IsOptional, IsString } from 'class-validator'
+import { IsArray, IsOptional, IsString } from 'class-validator'
 import passport from 'passport'
 
 import { UserService } from '@/services/UserService'
@@ -27,6 +27,12 @@ class UpdateDocumentDTO {
   @IsString()
   @IsOptional()
   content?: string
+
+  @IsString({
+    each: true
+  })
+  @IsOptional()
+  collaboratorIDs?: string[]
 }
 
 @Service()

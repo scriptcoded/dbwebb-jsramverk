@@ -12,7 +12,8 @@ const user = ref<User | null>(null)
 export const useAuth = () => {
   const getUser = async () => {
     try {
-      user.value = await auth.getUser()
+      const res = await auth.getUser()
+      user.value = res.data
     } catch (e) {
       if ((e as any).status !== 401) {
         throw e

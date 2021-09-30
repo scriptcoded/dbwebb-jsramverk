@@ -3,7 +3,7 @@ import argon2 from 'argon2'
 import { notFound } from '@hapi/boom'
 import { LeanDocument } from 'mongoose'
 
-import { User, UserModel } from '@/models/User'
+import { User, UserModel, getPublicUser, PublicUser } from '@/models/User'
 import { isMongoError } from '@/helpers/mongoose'
 
 export interface CreateUserInput {
@@ -57,5 +57,11 @@ export class UserService {
     const leanUser = JSON.parse(JSON.stringify(user))
 
     return leanUser
+  }
+
+  async getUsers (): Promise<PublicUser[]> {
+    const users = await UserModel.find()
+
+    return users.map(getPublicUser)
   }
 }

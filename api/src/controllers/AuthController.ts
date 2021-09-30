@@ -6,6 +6,8 @@ import passport from 'passport'
 import { UserService } from '@/services/UserService'
 import { validateRequest } from '@/helpers/validate'
 import { auth } from '@/middleware/auth'
+import { UserModel } from '@/models/User'
+import { AuthenticatedRequest } from '@/interfaces'
 
 class CreateUserDTO {
   @IsString()
@@ -35,8 +37,13 @@ export class AuthController {
 
   public login = [
     passport.authenticate('local'),
-    async (req: Request, res: Response): Promise<void> => {
-      res.send({})
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const user = await UserModel.findById(req.user._id)
+
+      res.send({
+        data: user
+      })
     }
   ]
 
@@ -49,9 +56,12 @@ export class AuthController {
 
   public me = [
     auth(),
-    async (req: Request, res: Response): Promise<void> => {
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const user = await UserModel.findById(req.user._id)
+
       res.send({
-        ok: true
+        data: user
       })
     }
   ]

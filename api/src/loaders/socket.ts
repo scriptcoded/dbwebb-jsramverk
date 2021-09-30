@@ -1,8 +1,5 @@
 import Container, { Token } from 'typedi'
-import { Server, Socket } from 'socket.io'
-import { NextFunction } from 'express'
-import session from 'express-session'
-import passport from 'passport'
+import { Server } from 'socket.io'
 
 import { DocumentService } from '@/services/DocumentService'
 import { sessionMiddleware } from '@/middleware/session'

@@ -24,6 +24,7 @@ export interface UpdateDocumentInput {
   userID: string;
   name?: string;
   content?: string;
+  collaboratorIDs?: string[];
 }
 
 export interface DeleteDocumentInput {
@@ -37,6 +38,7 @@ export class DocumentService {
     const { userID } = data
 
     const user = await UserModel.findById(userID)
+      .populate('documents.collaborators')
     if (!user) throw notFound('User not found')
 
     return user.documents
@@ -46,6 +48,7 @@ export class DocumentService {
     const { documentID, userID } = data
 
     const user = await UserModel.findById(userID)
+      .populate('documents.collaborators')
     const document = user?.documents.find(d => d._id.toString() === documentID.toString())
     if (!document || !user) throw notFound('Document not found')
 
@@ -56,6 +59,7 @@ export class DocumentService {
     const { userID, name, content } = data
 
     const user = await UserModel.findById(userID)
+      .populate('documents.collaborators')
     if (!user) throw notFound('User not found')
 
     const document = new DocumentModel({
@@ -73,14 +77,20 @@ export class DocumentService {
   async updateDocument (data: UpdateDocumentInput): Promise<Document> {
     // It's not ideal to handle access control inside the service, but it's a
     // lot easier than building an access control layer above.
-    const { documentID, userID, name, content } = data
+    const { documentID, userID, name, content, collaboratorIDs } = data
 
     const user = await UserModel.findById(userID)
+      .populate('documents.collaborators')
     const document = user?.documents.find(d => d._id.toString() === documentID.toString())
     if (!document || !user) throw notFound('Document not found')
 
     document.name = name ?? document.name
     document.content = content ?? document.content
+
+    if (data.collaboratorIDs) {
+      const newCollaborators = await UserModel.find({ _id: { $in: collaboratorIDs } })
+      document.collaborators = newCollaborators
+    }
 
     await user.save()
 
@@ -93,6 +103,7 @@ export class DocumentService {
     const { documentID, userID } = data
 
     const user = await UserModel.findById(userID)
+      .populate('documents.collaborators')
     const document = user?.documents.find(d => d._id.toString() === documentID.toString())
     if (!document || !user) throw notFound('Document not found')
 

@@ -3,10 +3,12 @@ import asyncRouter from 'express-promise-router'
 import Container from 'typedi'
 
 import { AuthController } from './controllers/AuthController'
+import { UserController } from './controllers/UserController'
 import { DocumentController } from './controllers/DocumentController'
 
 export function buildRouter (): express.Router {
   const authController = Container.get(AuthController)
+  const userController = Container.get(UserController)
   const documentController = Container.get(DocumentController)
 
   const router = asyncRouter()
@@ -15,6 +17,8 @@ export function buildRouter (): express.Router {
   router.post('/auth/login', authController.login)
   router.post('/auth/logout', authController.logout)
   router.get('/auth/me', authController.me)
+
+  router.get('/users', userController.getUsers)
 
   router.get('/documents', documentController.getAll)
   router.get('/documents/:id', documentController.getOne)

@@ -1,10 +1,12 @@
 import { computed, nextTick, Ref, ref, watch } from 'vue'
 import { fetchDocuments, fetchDocument, createDocument, updateDocument, deleteDocument } from '../api/documents'
+import { User } from './users'
 
 export interface Document {
   _id: string;
   name: string;
   content: string;
+  collaborators: User[];
 }
 
 export interface CreateDocumentInput {
@@ -134,6 +136,37 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
     setDocument(null)
   }
 
+  const addDocumentCollaborator = async (userID: string): Promise<void> => {
+    if (id.value == null || !document.value) {
+      return
+    }
+
+    const response = await updateDocument(id.value, {
+      collaboratorIDs: [
+        ...document.value.collaborators.map(c => c._id),
+        userID
+      ]
+    })
+    setDocument(response.data)
+
+    return response.data
+  }
+
+  const removeDocumentCollaborator = async (userID: string): Promise<void> => {
+    if (id.value == null || !document.value) {
+      return
+    }
+
+    const response = await updateDocument(id.value, {
+      collaboratorIDs: document.value.collaborators
+        .filter(c => c._id !== userID)
+        .map(c => c._id)
+    })
+    setDocument(response.data)
+
+    return response.data
+  }
+
   loadDocument()
   watch(id, loadDocument)
 
@@ -142,6 +175,8 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
     dirty,
     loadDocument,
     save,
-    destroy
+    destroy,
+    addDocumentCollaborator,
+    removeDocumentCollaborator
   }
 }

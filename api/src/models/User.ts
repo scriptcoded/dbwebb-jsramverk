@@ -2,6 +2,11 @@ import { model, Schema } from 'mongoose'
 
 import { Document, documentSchema } from './Document'
 
+export interface PublicUser {
+  _id: string;
+  username: string;
+}
+
 export interface User {
   _id: string;
   username: string;
@@ -23,3 +28,10 @@ export const userSchema = new Schema<User>({
 })
 
 export const UserModel = model<User>('User', userSchema)
+
+export function getPublicUser (user: User): PublicUser {
+  return {
+    _id: user._id,
+    username: user.username
+  }
+}

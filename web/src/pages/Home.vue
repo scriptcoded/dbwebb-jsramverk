@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import RealTimeEditor from '../components/realTimeEditor/TextEditor.vue'
 import DocumentList from '../components/DocumentList.vue'
 import LoginPrompt from '../components/LoginPrompt.vue'
 import { useAuth } from '../composables/auth'
 import { useDocument, useDocuments } from '../composables/documents'
+import { useUsers } from '../composables/users'
 import BaseInput from '../components/BaseInput.vue'
 import BaseButton from '../components/BaseButton.vue'
 
@@ -13,8 +14,12 @@ import { config } from '../config'
 
 const activeDocument = ref<string | null>(null)
 
-const { document, destroy } = useDocument(activeDocument)
+const { document, destroy, addDocumentCollaborator, removeDocumentCollaborator } = useDocument(activeDocument)
 const { updateUserDocumentLocal } = useDocuments()
+
+const { getUsers, users } = useUsers()
+
+onMounted(getUsers)
 
 const characterCount = ref(0)
 const wordCount = ref(0)
@@ -86,6 +91,28 @@ const destroyDocument = async () => {
 
 const { user } = useAuth()
 
+const addingCollaborator = ref('')
+
+watch(addingCollaborator, async (userID) => {
+  if (addingCollaborator.value) {
+    await nextTick()
+
+    addingCollaborator.value = ''
+
+    if (!document.value) {
+      return
+    }
+
+    addDocumentCollaborator(userID)
+  }
+})
+
+const remainingUsers = computed(() => {
+  return users.value
+    .filter(u => !document.value?.collaborators.map(c => c._id).includes(u._id))
+    .filter(u => u._id !== user.value?._id)
+})
+
 </script>
 
 <template>
@@ -117,6 +144,33 @@ const { user } = useAuth()
       </h3>
 
       <template v-if="document">
+        <ul>
+          <li
+            v-for="collaborator in document.collaborators"
+            :key="collaborator._id"
+          >
+            {{ collaborator.username }}
+            <button @click="removeDocumentCollaborator(collaborator._id)">
+              X
+            </button>
+          </li>
+        </ul>
+
+        <select
+          v-model="addingCollaborator"
+        >
+          <option value="">
+            Add collaborator
+          </option>
+          <option
+            v-for="u in remainingUsers"
+            :key="u._id"
+            :value="u._id"
+          >
+            {{ u.username }}
+          </option>
+        </select>
+
         <BaseInput
           v-model="document.name"
           label="Name"
