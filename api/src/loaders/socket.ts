@@ -61,7 +61,10 @@ export async function setupSocket (): Promise<void> {
         name: doc.name
       })
 
-      socket.broadcast.emit('updatedDoc', doc)
+      socket.broadcast.emit('updatedDoc', {
+        ...doc,
+        __senderID: userID
+      })
     })
   })
 }

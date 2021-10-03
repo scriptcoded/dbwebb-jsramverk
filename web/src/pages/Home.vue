@@ -47,6 +47,8 @@ const connectSocket = () => {
   socket.on('updatedDoc', (doc) => {
     if (!document.value) { return }
 
+    if (doc.__senderID === user.value?._id) { return }
+
     updateUserDocumentLocal(doc._id, {
       content: doc.content,
       name: doc.name
@@ -67,7 +69,6 @@ const broadcastDocument = () => {
 
 watch(document, (doc, oldDoc) => {
   if (doc && doc?._id === oldDoc?._id) {
-    console.log('Broadcasting', doc)
     broadcastDocument()
   }
 }, {
