@@ -39,8 +39,6 @@ export async function setupSocket (): Promise<void> {
   Container.set(SOCKET_TOKEN, io)
 
   io.use(wrap(sessionMiddleware))
-  // io.use(wrap(passport.initialize()))
-  // io.use(wrap(passport.session()))
 
   io.on('connection', (socket) => {
     console.log('a user connected')
@@ -49,21 +47,21 @@ export async function setupSocket (): Promise<void> {
       socket.join(room)
     })
 
-    socket.on('updateDoc', (doc: UpdateDocData) => {
-      socket.broadcast.emit('updatedDoc', doc)
-
+    socket.on('updateDoc', async (doc: UpdateDocData) => {
       const userID = (socket.request as any).session?.passport?.user
 
       if (!userID) {
         return
       }
 
-      documentService.updateDocument({
+      await documentService.updateDocument({
         documentID: doc._id,
         userID,
         content: doc.content,
         name: doc.name
       })
+
+      socket.broadcast.emit('updatedDoc', doc)
     })
   })
 }

@@ -1,10 +1,15 @@
 import { Service } from 'typedi'
 import { notFound } from '@hapi/boom'
+import { Types } from 'mongoose'
 
-import { UserModel } from '@/models/User'
+import { User, UserModel } from '@/models/User'
 import { Document, DocumentModel } from '@/models/Document'
 
 export interface GetDocumentsInput {
+  userID: string;
+}
+
+export interface GetCollaboratingDocumentsInput {
   userID: string;
 }
 
@@ -41,16 +46,25 @@ export class DocumentService {
       .populate('documents.collaborators')
     if (!user) throw notFound('User not found')
 
-    return user.documents
+    const allUsers = await UserModel.find()
+      .populate('documents.collaborators')
+    const allDocuments = allUsers.flatMap(u => u.documents)
+    const collabDocuments = allDocuments.filter(d => d.collaborators.some(c => c._id.toString() === userID.toString()))
+
+    return [
+      ...user.documents,
+      ...collabDocuments
+    ]
   }
 
   async getDocument (data: GetDocumentInput): Promise<Document> {
     const { documentID, userID } = data
 
-    const user = await UserModel.findById(userID)
-      .populate('documents.collaborators')
-    const document = user?.documents.find(d => d._id.toString() === documentID.toString())
-    if (!document || !user) throw notFound('Document not found')
+    const { user, document } = await this.findUserAndDocument(documentID, userID)
+
+    if (!document || !user) {
+      throw notFound('Document not found')
+    }
 
     return document
   }
@@ -79,15 +93,16 @@ export class DocumentService {
     // lot easier than building an access control layer above.
     const { documentID, userID, name, content, collaboratorIDs } = data
 
-    const user = await UserModel.findById(userID)
-      .populate('documents.collaborators')
-    const document = user?.documents.find(d => d._id.toString() === documentID.toString())
-    if (!document || !user) throw notFound('Document not found')
+    const { user, document } = await this.findUserAndDocument(documentID, userID)
+
+    if (!document || !user) {
+      throw notFound('Document not found')
+    }
 
     document.name = name ?? document.name
     document.content = content ?? document.content
 
-    if (data.collaboratorIDs) {
+    if (data.collaboratorIDs && user._id.toString() === userID.toString()) {
       const newCollaborators = await UserModel.find({ _id: { $in: collaboratorIDs } })
       document.collaborators = newCollaborators
     }
@@ -102,13 +117,42 @@ export class DocumentService {
     // lot easier than building an access control layer above.
     const { documentID, userID } = data
 
-    const user = await UserModel.findById(userID)
-      .populate('documents.collaborators')
-    const document = user?.documents.find(d => d._id.toString() === documentID.toString())
-    if (!document || !user) throw notFound('Document not found')
+    const { user, document } = await this.findUserAndDocument(documentID, userID)
+
+    if (!document || !user) {
+      throw notFound('Document not found')
+    }
 
     user.documents = user.documents.filter(d => d._id.toString() !== documentID.toString())
 
     await user.save()
+  }
+
+  private async findUserAndDocument (documentID: string, userID?: string) {
+    const allUsers = await UserModel.find()
+      .populate('documents.collaborators')
+    let user: typeof allUsers[0] | undefined
+    let document: Document | undefined
+
+    for (const u of allUsers) {
+      const userDoc = u.documents.find(d => d._id.toString() === documentID)
+
+      if (userDoc) {
+        if (userID !== undefined) {
+          const isOwner = u._id.toString() === userID.toString()
+          const isCollaborator = userDoc?.collaborators.some(c => c._id.toString() === userID.toString())
+
+          if (!isOwner && !isCollaborator) {
+            continue
+          }
+        }
+
+        user = u
+        document = userDoc
+        break
+      }
+    }
+
+    return { user, document }
   }
 }

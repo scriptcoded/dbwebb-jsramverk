@@ -8,6 +8,7 @@ import { useDocument, useDocuments } from '../composables/documents'
 import { useUsers } from '../composables/users'
 import BaseInput from '../components/BaseInput.vue'
 import BaseButton from '../components/BaseButton.vue'
+import BaseSelect from '../components/BaseSelect.vue'
 
 import { io, Socket } from 'socket.io-client'
 import { config } from '../config'
@@ -113,6 +114,14 @@ const remainingUsers = computed(() => {
     .filter(u => u._id !== user.value?._id)
 })
 
+const isOwner = computed(() => {
+  if (!document.value || !user.value) {
+    return false
+  }
+
+  return !document.value.collaborators.some(c => c._id === user.value?._id)
+})
+
 </script>
 
 <template>
@@ -144,22 +153,31 @@ const remainingUsers = computed(() => {
       </h3>
 
       <template v-if="document">
-        <ul>
+        <ul class="space-y-1">
           <li
             v-for="collaborator in document.collaborators"
             :key="collaborator._id"
+            class="flex justify-between"
           >
             {{ collaborator.username }}
-            <button @click="removeDocumentCollaborator(collaborator._id)">
-              X
-            </button>
+
+            <BaseButton
+              size="tiny"
+              @click="removeDocumentCollaborator(collaborator._id)"
+            >
+              Remove
+            </BaseButton>
           </li>
         </ul>
 
-        <select
+        <BaseSelect
+          v-if="isOwner"
           v-model="addingCollaborator"
         >
-          <option value="">
+          <option
+            disabled
+            value=""
+          >
             Add collaborator
           </option>
           <option
@@ -169,7 +187,7 @@ const remainingUsers = computed(() => {
           >
             {{ u.username }}
           </option>
-        </select>
+        </BaseSelect>
 
         <BaseInput
           v-model="document.name"

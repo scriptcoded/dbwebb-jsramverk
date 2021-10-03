@@ -3,7 +3,8 @@ import { computed, toRefs } from 'vue'
 
 const sizes = {
   normal: 'h-11 px-4 text-lg',
-  small: 'h-8 px-3 text-base'
+  small: 'h-8 px-3 text-base',
+  tiny: 'h-6 px-2 text-xs'
 }
 
 const colors = {
