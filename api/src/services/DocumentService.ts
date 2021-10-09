@@ -1,8 +1,7 @@
 import { Service } from 'typedi'
 import { notFound } from '@hapi/boom'
-import { Types } from 'mongoose'
 
-import { User, UserModel } from '@/models/User'
+import { UserModel } from '@/models/User'
 import { Document, DocumentModel } from '@/models/Document'
 
 export interface GetDocumentsInput {

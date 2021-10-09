@@ -75,7 +75,8 @@ export const RootQueryType = new GraphQLObjectType({
       args: {
         id: { type: GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLString },
-        content: { type: GraphQLString }
+        content: { type: GraphQLString },
+        collaboratorIDs: { type: GraphQLList(GraphQLString) }
       },
       async resolve (parent, args, origReq: Request) {
         const req = origReq as AuthenticatedRequest
@@ -86,7 +87,8 @@ export const RootQueryType = new GraphQLObjectType({
           documentID: args.id,
           userID: req.user._id,
           name: args.name,
-          content: args.content
+          content: args.content,
+          collaboratorIDs: args.collaboratorIDs
         })
 
         return document

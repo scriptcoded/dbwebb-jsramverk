@@ -66,6 +66,7 @@ export async function updateDocument (id: string, updateData: any) {
         id: "${id}"
         ${updateData.name ? `name: "${updateData.name}"` : ''}
         ${updateData.content ? `content: "${updateData.content}"` : ''}
+        ${updateData.collaboratorIDs ? `content: "${updateData.collaboratorIDs}"` : ''}
       ) {
         _id
         name

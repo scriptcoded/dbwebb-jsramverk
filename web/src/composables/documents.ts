@@ -25,7 +25,6 @@ export function useDocuments () {
   const getUserDocuments = async () => {
     const docs = await fetchDocuments()
     documents.value = docs
-    console.log(documents.value)
   }
 
   const createUserDocument = async (data: CreateDocumentInput = {}): Promise<Document> => {
