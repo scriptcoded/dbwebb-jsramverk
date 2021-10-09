@@ -1,9 +1,7 @@
 import { Service } from 'typedi'
 import { Request, Response } from 'express'
-import { IsArray, IsOptional, IsString } from 'class-validator'
-import passport from 'passport'
+import { IsOptional, IsString } from 'class-validator'
 
-import { UserService } from '@/services/UserService'
 import { validateRequest } from '@/helpers/validate'
 import { auth } from '@/middleware/auth'
 import { DocumentService } from '@/services/DocumentService'
@@ -116,6 +114,22 @@ export class DocumentController {
       })
 
       res.send({ })
+    }
+  ]
+
+  public renderPDF = [
+    auth(),
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const pdfDocument = await this.documentService.renderPDF({
+        documentID: req.params.id,
+        userID: req.user._id
+      })
+
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader('Content-Disposition', 'inline; filename=document.pdf')
+
+      res.send(pdfDocument)
     }
   ]
 }

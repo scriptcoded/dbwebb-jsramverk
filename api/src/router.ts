@@ -25,6 +25,7 @@ export function buildRouter (): express.Router {
   router.post('/documents', documentController.create)
   router.patch('/documents/:id', documentController.update)
   router.delete('/documents/:id', documentController.delete)
+  router.get('/documents/:id/pdf', documentController.renderPDF)
 
   return router
 }

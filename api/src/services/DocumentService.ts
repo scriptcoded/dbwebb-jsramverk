@@ -1,5 +1,9 @@
+import path from 'path'
+import fs from 'fs'
+
 import { Service } from 'typedi'
 import { notFound } from '@hapi/boom'
+import pdf from 'html-pdf'
 
 import { UserModel } from '@/models/User'
 import { Document, DocumentModel } from '@/models/Document'
@@ -32,6 +36,11 @@ export interface UpdateDocumentInput {
 }
 
 export interface DeleteDocumentInput {
+  documentID: string;
+  userID: string;
+}
+
+export interface RenderPDFInput {
   documentID: string;
   userID: string;
 }
@@ -155,5 +164,57 @@ export class DocumentService {
     }
 
     return { user, document }
+  }
+
+  async renderPDF (data: RenderPDFInput): Promise<Buffer> {
+    const { documentID, userID } = data
+
+    const { user, document } = await this.findUserAndDocument(documentID, userID)
+
+    if (!document || !user) {
+      throw notFound('Document not found')
+    }
+
+    return new Promise<Buffer>((resolve, reject) => {
+      fs.readFile(path.join(__dirname, '..', 'pdfAssets', 'style.css'), 'utf8', (err, style) => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        const html = `
+        <html>
+          <head>
+            <!-- <link rel="stylesheet" href="style.css"> -->
+            <style>${style}</style>
+          </head>
+          <body>
+            <h1 class="text-2xl prose border-b-2 pb-1 mb-5">${document.name}</h1>
+            <div class="prose">
+              ${document.content}
+            </div>
+          </body>
+        </html>
+        `
+
+        pdf.create(html, {
+          format: 'A4',
+          border: {
+            top: '15mm',
+            bottom: '15mm',
+            left: '10mm',
+            right: '10mm'
+          }
+        })
+          .toBuffer((err, buffer) => {
+            if (err) {
+              console.error('PDF rendering error', err)
+              reject(err)
+            } else {
+              resolve(buffer)
+            }
+          })
+      })
+    })
   }
 }
