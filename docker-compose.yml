@@ -12,5 +12,15 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=changeme
       - MONGO_INITDB_DATABASE=jsramverk
 
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - jsramverk-redis-data:/data
+    command: ['redis-server', '--appendonly', 'yes']
+
 volumes:
   jsramverk-mongodb-data:
+  jsramverk-redis-data:

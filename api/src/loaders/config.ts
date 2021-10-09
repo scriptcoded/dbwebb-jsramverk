@@ -6,6 +6,7 @@ export interface Config {
   appKeys: string[];
 
   databaseURL: string;
+  redisURL?: string;
 
   isProduction: boolean;
 }
@@ -40,6 +41,7 @@ export function loadConfig (): void {
     appKeys: getEnvVar('APP_KEYS').split(','),
 
     databaseURL: getEnvVar('DATABASE_URL'),
+    redisURL: getEnvVar('REDIS_URL', null) ?? undefined,
 
     isProduction: process.env.NODE_ENV === 'production'
   }
