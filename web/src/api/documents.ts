@@ -1,21 +1,100 @@
 import { httpClient } from './HttpClient'
 
-export function createDocument (data: any) {
-  return httpClient.post('/documents', data)
+export async function createDocument (createData: any = {}) {
+  const args = `
+    ${createData.name ? `name: "${createData.name}"` : ''}
+    ${createData.content ? `content: "${createData.content}"` : ''}
+  `.trim()
+
+  const { data } = await httpClient.post('/graphql', {
+    query: `{
+      createDocument ${args ? `(${args})` : ''} {
+        _id
+        name
+        content
+        collaborators {
+          _id
+          username
+        }
+      }
+    }`
+  })
+
+  return data.createDocument
 }
 
-export function fetchDocuments () {
-  return httpClient.get('/documents')
+export async function fetchDocuments () {
+  const { data } = await httpClient.post('/graphql', {
+    query: `{
+      documents {
+        _id
+        name
+        content
+        collaborators {
+          _id
+          username
+        }
+      }
+    }`
+  })
+
+  return data.documents
 }
 
-export function fetchDocument (id: string) {
-  return httpClient.get(`/documents/${id}`)
+export async function fetchDocument (id: string) {
+  const { data } = await httpClient.post('/graphql', {
+    query: `{
+      document (id: "${id}") {
+        _id
+        name
+        content
+        collaborators {
+          _id
+          username
+        }
+      }
+    }`
+  })
+
+  return data.document
 }
 
-export function updateDocument (id: string, data: any) {
-  return httpClient.patch(`/documents/${id}`, data)
+export async function updateDocument (id: string, updateData: any) {
+  const { data } = await httpClient.post('/graphql', {
+    query: `{
+      updateDocument (
+        id: "${id}"
+        ${updateData.name ? `name: "${updateData.name}"` : ''}
+        ${updateData.content ? `content: "${updateData.content}"` : ''}
+      ) {
+        _id
+        name
+        content
+        collaborators {
+          _id
+          username
+        }
+      }
+    }`
+  })
+
+  return data.updateDocument
 }
 
-export function deleteDocument (id: string) {
-  return httpClient.delete(`/documents/${id}`)
+export async function deleteDocument (id: string) {
+  const { data } = await httpClient.post('/graphql', {
+    query: `{
+      deleteDocument (id: "${id}") {
+        _id
+        name
+        content
+        collaborators {
+          _id
+          username
+        }
+      }
+    }`
+  })
+
+  return data.deleteDocument
 }

@@ -23,22 +23,23 @@ const documents = ref<Document[]>([])
 
 export function useDocuments () {
   const getUserDocuments = async () => {
-    const response = await fetchDocuments()
-    documents.value = response.data
+    const docs = await fetchDocuments()
+    documents.value = docs
+    console.log(documents.value)
   }
 
   const createUserDocument = async (data: CreateDocumentInput = {}): Promise<Document> => {
-    const response = await createDocument(data)
-    documents.value.push(response.data)
+    const doc = await createDocument(data)
+    documents.value.push(doc)
 
-    return response.data
+    return doc
   }
 
   const updateUserDocument = async (documentID: string, data: UpdateDocumentInput): Promise<Document> => {
-    const response = await updateDocument(documentID, data)
-    documents.value.push(response.data)
+    const doc = await updateDocument(documentID, data)
+    documents.value.push(doc)
 
-    return response.data
+    return doc
   }
 
   const updateUserDocumentLocal = async (documentID: string, data: UpdateDocumentInput): Promise<Document> => {
@@ -72,7 +73,6 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
   const dirty = ref(false)
 
   watch(storedDocument, () => {
-    console.log('B')
     document.value = storedDocument.value
       ? { ...storedDocument.value }
       : null
@@ -111,8 +111,8 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
       return
     }
 
-    const response = await fetchDocument(id.value)
-    setDocument(response.data)
+    const doc = await fetchDocument(id.value)
+    setDocument(doc)
   }
 
   const save = async () => {
@@ -120,11 +120,11 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
       return
     }
 
-    const response = await updateDocument(id.value, {
+    const doc = await updateDocument(id.value, {
       name: document.value?.name,
       content: document.value?.content
     })
-    setDocument(response.data)
+    setDocument(doc)
   }
 
   const destroy = async () => {
@@ -141,15 +141,15 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
       return
     }
 
-    const response = await updateDocument(id.value, {
+    const doc = await updateDocument(id.value, {
       collaboratorIDs: [
         ...document.value.collaborators.map(c => c._id),
         userID
       ]
     })
-    setDocument(response.data)
+    setDocument(doc)
 
-    return response.data
+    return doc
   }
 
   const removeDocumentCollaborator = async (userID: string): Promise<void> => {
@@ -157,14 +157,14 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
       return
     }
 
-    const response = await updateDocument(id.value, {
+    const doc = await updateDocument(id.value, {
       collaboratorIDs: document.value.collaborators
         .filter(c => c._id !== userID)
         .map(c => c._id)
     })
-    setDocument(response.data)
+    setDocument(doc)
 
-    return response.data
+    return doc
   }
 
   loadDocument()

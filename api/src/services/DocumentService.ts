@@ -112,7 +112,7 @@ export class DocumentService {
     return document
   }
 
-  async deleteDocument (data: DeleteDocumentInput): Promise<void> {
+  async deleteDocument (data: DeleteDocumentInput): Promise<Document> {
     // It's not ideal to handle access control inside the service, but it's a
     // lot easier than building an access control layer above.
     const { documentID, userID } = data
@@ -126,6 +126,8 @@ export class DocumentService {
     user.documents = user.documents.filter(d => d._id.toString() !== documentID.toString())
 
     await user.save()
+
+    return document
   }
 
   private async findUserAndDocument (documentID: string, userID?: string) {
