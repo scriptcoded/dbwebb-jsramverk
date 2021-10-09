@@ -8,6 +8,8 @@ defineProps<{
   editor: Editor
 }>()
 
+const emit = defineEmits(['download'])
+
 </script>
 
 <template>
@@ -74,6 +76,10 @@ defineProps<{
     </div>
 
     <div class="flex">
+      <TextEditorNavbarButton
+        icon="fas fa-download"
+        @click="emit('download')"
+      />
       <TextEditorNavbarButton
         icon="fas fa-undo"
         @click="editor.chain().focus().undo().run()"

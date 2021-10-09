@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import RealTimeEditor from '../components/realTimeEditor/TextEditor.vue'
+import TextEditor from '../components/realTimeEditor/TextEditor.vue'
 import DocumentList from '../components/DocumentList.vue'
 import LoginPrompt from '../components/LoginPrompt.vue'
 import { useAuth } from '../composables/auth'
@@ -123,6 +123,13 @@ const isOwner = computed(() => {
   return !document.value.collaborators.some(c => c._id === user.value?._id)
 })
 
+const downloadDocument = () => {
+  if (!document.value) { return }
+
+  const downloadURL = `${config.apiURL}/documents/${document.value._id}/pdf`
+  window.open(downloadURL, '_blank')
+}
+
 </script>
 
 <template>
@@ -140,11 +147,12 @@ const isOwner = computed(() => {
     </div>
 
     <div class="lg:flex-[3] lg:max-w-5xl">
-      <RealTimeEditor
+      <TextEditor
         v-if="document"
         v-model:content="document.content"
         v-model:characterCount="characterCount"
         v-model:wordCount="wordCount"
+        @download="downloadDocument"
       />
     </div>
 

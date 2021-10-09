@@ -15,7 +15,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const { content } = toRefs(props)
 
-const emit = defineEmits(['update:content', 'update:characterCount', 'update:wordCount'])
+const emit = defineEmits([
+  'update:content',
+  'update:characterCount',
+  'update:wordCount',
+  'download'
+])
 
 const emitEditorContent = (editor: Editor) => {
   emit('update:content', editor.getHTML())
@@ -71,6 +76,7 @@ watch(content, (value) => {
   >
     <TextEditorNavbar
       :editor="editor"
+      @download="emit('download')"
     />
     <TextEditorContent :editor="editor" />
   </div>
