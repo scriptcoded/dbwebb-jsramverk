@@ -7,10 +7,13 @@ import pinoLogger from 'express-pino-logger'
 import cors from 'cors'
 import session from 'express-session'
 import passport from 'passport'
+import { graphqlHTTP } from 'express-graphql'
+import { GraphQLSchema } from 'graphql'
 
 import { errorHandler } from '@/middleware/errorHandler'
 import { buildRouter } from '@/router'
 import { createSessionMiddleware, sessionMiddleware } from '@/middleware/session'
+import { RootQueryType } from '@/graphql/root'
 
 import { CONFIG_TOKEN } from './config'
 import { LOGGER_TOKEN } from './logger'
@@ -49,6 +52,13 @@ export function setupExpress (): void {
   app.use(passport.session())
 
   app.use(buildRouter())
+
+  app.use('/graphql', graphqlHTTP({
+    schema: new GraphQLSchema({
+      query: RootQueryType
+    }),
+    graphiql: !config.isProduction
+  }))
 
   app.use(errorHandler())
 
