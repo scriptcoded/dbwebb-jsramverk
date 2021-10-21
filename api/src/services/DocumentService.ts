@@ -1,12 +1,16 @@
 import path from 'path'
 import fs from 'fs'
 
-import { Service } from 'typedi'
+import { Inject, Service } from 'typedi'
 import { notFound } from '@hapi/boom'
 import pdf from 'html-pdf'
 
 import { UserModel } from '@/models/User'
 import { Document, DocumentModel } from '@/models/Document'
+import { generateToken } from '@/helpers/crypto'
+import { Config, CONFIG_TOKEN } from '@/loaders/config'
+
+import { EmailService } from './EmailService'
 
 export interface GetDocumentsInput {
   userID: string;
@@ -40,6 +44,12 @@ export interface DeleteDocumentInput {
   userID: string;
 }
 
+export interface InviteUserInput {
+  documentID: string;
+  userID: string;
+  email: string;
+}
+
 export interface RenderPDFInput {
   documentID: string;
   userID: string;
@@ -47,6 +57,11 @@ export interface RenderPDFInput {
 
 @Service()
 export class DocumentService {
+  constructor (
+    @Inject(CONFIG_TOKEN) private config: Config,
+    private emailService: EmailService
+  ) { }
+
   async getDocuments (data: GetDocumentsInput): Promise<Document[]> {
     const { userID } = data
 
@@ -138,7 +153,7 @@ export class DocumentService {
     return document
   }
 
-  private async findUserAndDocument (documentID: string, userID?: string) {
+  private async findUserAndDocument (documentID: string, userID?: string, requireOwner = false) {
     const allUsers = await UserModel.find()
       .populate('documents.collaborators')
     let user: typeof allUsers[0] | undefined
@@ -150,7 +165,7 @@ export class DocumentService {
       if (userDoc) {
         if (userID !== undefined) {
           const isOwner = u._id.toString() === userID.toString()
-          const isCollaborator = userDoc?.collaborators.some(c => c._id.toString() === userID.toString())
+          const isCollaborator = !requireOwner && userDoc?.collaborators.some(c => c._id.toString() === userID.toString())
 
           if (!isOwner && !isCollaborator) {
             continue
@@ -164,6 +179,61 @@ export class DocumentService {
     }
 
     return { user, document }
+  }
+
+  async inviteUser (data: InviteUserInput): Promise<{ document: Document; invitationToken: string }> {
+    // It's not ideal to handle access control inside the service, but it's a
+    // lot easier than building an access control layer above.
+    const { documentID, userID, email } = data
+
+    const { user, document } = await this.findUserAndDocument(documentID, userID, true)
+
+    if (!document || !user) {
+      throw notFound('Document not found')
+    }
+
+    const invitationToken = await generateToken()
+
+    document.invitationTokens.push(invitationToken)
+
+    await user.save()
+
+    await this.emailService.sendInvite({
+      email,
+      sender: user.username,
+      ctaLink: `${this.config.appURL}/#/register?token=${invitationToken}`
+    })
+
+    return {
+      document,
+      invitationToken
+    }
+  }
+
+  async addUserWithToken (userID: string, token: string): Promise<void> {
+    const allUsers = await UserModel.find()
+      .populate('documents.collaborators')
+    let user: typeof allUsers[0] | undefined
+    let document: Document | undefined
+
+    for (const u of allUsers) {
+      const userDoc = u.documents.find(d => d.invitationTokens.includes(token))
+
+      if (userDoc) {
+        user = u
+        document = userDoc
+        break
+      }
+    }
+
+    if (!document || !user) { return }
+
+    document.invitationTokens = document.invitationTokens.filter(t => t !== token)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    document.collaborators = [...new Set([...document.collaborators, userID])]
+
+    await user.save()
   }
 
   async renderPDF (data: RenderPDFInput): Promise<Buffer> {

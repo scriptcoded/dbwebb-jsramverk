@@ -15,7 +15,7 @@ import { config } from '../config'
 
 const activeDocument = ref<string | null>(null)
 
-const { document, destroy, addDocumentCollaborator, removeDocumentCollaborator } = useDocument(activeDocument)
+const { document, destroy, addDocumentCollaborator, removeDocumentCollaborator, inviteUser } = useDocument(activeDocument)
 const { updateUserDocumentLocal } = useDocuments()
 
 const { getUsers, users } = useUsers()
@@ -34,10 +34,6 @@ const connectSocket = () => {
     jsonp: false,
     reconnectionAttempts: Infinity,
     transports: ['websocket']
-  })
-
-  socket.on('connect', () => {
-    console.log(socket.id)
   })
 
   socket.on('connect_error', (e) => {
@@ -128,6 +124,27 @@ const downloadDocument = () => {
 
   const downloadURL = `${config.apiURL}/documents/${document.value._id}/pdf`
   window.open(downloadURL, '_blank')
+}
+
+const inviteEmail = ref('')
+const invitationSent = ref(false)
+// eslint-disable-next-line no-undef
+let invitationSentTimeout: NodeJS.Timeout | null = null
+
+const sendInvite = async () => {
+  if (!inviteEmail.value) { return }
+
+  await inviteUser(inviteEmail.value)
+
+  if (invitationSentTimeout) {
+    clearTimeout(invitationSentTimeout)
+  }
+  invitationSent.value = true
+
+  invitationSentTimeout = setTimeout(() => {
+    invitationSent.value = false
+    invitationSentTimeout = null
+  }, 3000)
 }
 
 </script>
@@ -222,6 +239,34 @@ const downloadDocument = () => {
         >
           Delete
         </BaseButton>
+
+        <hr>
+
+        <form
+          class="space-y-4"
+          @submit.prevent="sendInvite"
+        >
+          <BaseInput
+            v-model="inviteEmail"
+            type="email"
+            label="Invite email"
+          />
+
+          <div
+            v-if="invitationSent"
+            class="bg-green-600 rounded-lg px-4 h-11 text-white flex justify-center items-center"
+          >
+            Invitation sent!
+          </div>
+
+          <BaseButton
+            v-else
+            type="submit"
+            class="w-full"
+          >
+            Invite
+          </BaseButton>
+        </form>
       </template>
     </div>
   </div>

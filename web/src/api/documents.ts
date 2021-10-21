@@ -60,13 +60,30 @@ export async function fetchDocument (id: string) {
 }
 
 export async function updateDocument (id: string, updateData: any) {
+  console.log(`{
+    updateDocument (
+      id: "${id}"
+      ${updateData.name ? `name: "${updateData.name}"` : ''}
+      ${updateData.content ? `content: "${updateData.content}"` : ''}
+      ${updateData.collaboratorIDs ? `collaboratorIDs: ${JSON.stringify(updateData.collaboratorIDs)}` : ''}
+    ) {
+      _id
+      name
+      content
+      collaborators {
+        _id
+        username
+      }
+    }
+  }`)
+
   const { data } = await httpClient.post('/graphql', {
     query: `{
       updateDocument (
         id: "${id}"
         ${updateData.name ? `name: "${updateData.name}"` : ''}
         ${updateData.content ? `content: "${updateData.content}"` : ''}
-        ${updateData.collaboratorIDs ? `content: "${updateData.collaboratorIDs}"` : ''}
+        ${updateData.collaboratorIDs ? `collaboratorIDs: ${JSON.stringify(updateData.collaboratorIDs)}` : ''}
       ) {
         _id
         name
@@ -98,4 +115,10 @@ export async function deleteDocument (id: string) {
   })
 
   return data.deleteDocument
+}
+
+export async function inviteEmail (id: string, email: string) {
+  return httpClient.post(`/documents/${id}/invite`, {
+    email
+  })
 }

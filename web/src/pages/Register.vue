@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useAuth } from '../composables/auth'
 
@@ -15,6 +15,7 @@ const loading = ref(false)
 const error = ref<Error | null>(null)
 
 const router = useRouter()
+const route = useRoute()
 
 const { register } = useAuth()
 
@@ -23,7 +24,17 @@ const submitForm = async () => {
   error.value = null
 
   try {
-    await register(username.value, password.value)
+    let invitationToken: string | undefined
+
+    if (typeof route.query.token === 'string') {
+      invitationToken = route.query.token
+    }
+
+    await register(
+      username.value,
+      password.value,
+      invitationToken
+    )
 
     router.push('/login')
   } catch (e) {
@@ -45,6 +56,14 @@ const submitForm = async () => {
       color="red"
     >
       {{ error.message }}
+    </MessageBox>
+
+    <MessageBox
+      v-if="route.query.token"
+      class="mb-6 w-full"
+      color="green"
+    >
+      You have an invite token and will join a document!
     </MessageBox>
 
     <form

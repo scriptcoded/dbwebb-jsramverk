@@ -1,5 +1,5 @@
 import { computed, nextTick, Ref, ref, watch } from 'vue'
-import { fetchDocuments, fetchDocument, createDocument, updateDocument, deleteDocument } from '../api/documents'
+import { fetchDocuments, fetchDocument, createDocument, updateDocument, deleteDocument, inviteEmail } from '../api/documents'
 import { User } from './users'
 
 export interface Document {
@@ -166,6 +166,14 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
     return doc
   }
 
+  const inviteUser = async (email: string) => {
+    if (id.value == null) {
+      return
+    }
+
+    await inviteEmail(id.value, email)
+  }
+
   loadDocument()
   watch(id, loadDocument)
 
@@ -176,6 +184,7 @@ export function useDocument (documentID: Ref<string | null> | string | null) {
     save,
     destroy,
     addDocumentCollaborator,
-    removeDocumentCollaborator
+    removeDocumentCollaborator,
+    inviteUser
   }
 }

@@ -26,8 +26,8 @@ export const useAuth = () => {
     await getUser()
   }
 
-  const register = async (username: string, password: string) => {
-    await auth.register({ username, password })
+  const register = async (username: string, password: string, invitationToken?: string) => {
+    await auth.register({ username, password, invitationToken })
     await getUser()
   }
 

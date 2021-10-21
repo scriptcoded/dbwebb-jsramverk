@@ -7,12 +7,14 @@ export interface Document {
   name: string;
   content: string;
   collaborators: User[];
+  invitationTokens: string[];
 }
 
 export const documentSchema = new Schema<Document>({
   name: { type: String, required: true },
   content: { type: String, required: true },
-  collaborators: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  collaborators: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  invitationTokens: [{ type: String }]
 })
 
 export const DocumentModel = model<Document>('Document', documentSchema)

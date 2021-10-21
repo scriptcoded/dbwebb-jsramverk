@@ -6,9 +6,12 @@ import { LeanDocument } from 'mongoose'
 import { User, UserModel, getPublicUser, PublicUser } from '@/models/User'
 import { isMongoError } from '@/helpers/mongoose'
 
+import { DocumentService } from './DocumentService'
+
 export interface CreateUserInput {
   username: string;
   password: string;
+  invitationToken?: string;
 }
 export interface FindUserWithPasswordInput {
   username: string;
@@ -17,6 +20,10 @@ export interface FindUserWithPasswordInput {
 
 @Service()
 export class UserService {
+  constructor (
+    private documentService: DocumentService
+  ) { }
+
   async createUser (data: CreateUserInput): Promise<User> {
     const password = await argon2.hash(data.password)
 
@@ -25,6 +32,8 @@ export class UserService {
         username: data.username,
         password
       })
+
+      await this.documentService.addUserWithToken(user._id, data.invitationToken)
 
       return user
     } catch (e) {

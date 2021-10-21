@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.4",
+    "@sendgrid/mail": "^7.5.0",
     "argon2": "^0.28.2",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.4.0",

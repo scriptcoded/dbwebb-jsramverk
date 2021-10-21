@@ -1,6 +1,6 @@
 import { Service } from 'typedi'
 import { Request, Response } from 'express'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 import passport from 'passport'
 
 import { UserService } from '@/services/UserService'
@@ -15,6 +15,10 @@ class CreateUserDTO {
 
   @IsString()
   password: string
+
+  @IsString()
+  @IsOptional()
+  invitationToken: string
 }
 
 @Service()

@@ -1,6 +1,6 @@
 import { Service } from 'typedi'
 import { Request, Response } from 'express'
-import { IsOptional, IsString } from 'class-validator'
+import { IsEmail, IsOptional, IsString } from 'class-validator'
 
 import { validateRequest } from '@/helpers/validate'
 import { auth } from '@/middleware/auth'
@@ -31,6 +31,12 @@ class UpdateDocumentDTO {
   })
   @IsOptional()
   collaboratorIDs?: string[]
+}
+
+class InviteUserDTO {
+  @IsString()
+  @IsEmail()
+  email: string
 }
 
 @Service()
@@ -114,6 +120,22 @@ export class DocumentController {
       })
 
       res.send({ })
+    }
+  ]
+
+  public inviteUser = [
+    auth(),
+    async (origReq: Request, res: Response): Promise<void> => {
+      const req = origReq as AuthenticatedRequest
+      const body = await validateRequest(InviteUserDTO, req)
+
+      await this.documentService.inviteUser({
+        documentID: req.params.id,
+        userID: req.user._id,
+        ...body
+      })
+
+      res.send({})
     }
   ]
 

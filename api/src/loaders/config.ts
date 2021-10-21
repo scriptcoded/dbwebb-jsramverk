@@ -5,8 +5,16 @@ export interface Config {
 
   appKeys: string[];
 
+  appURL: string;
+
   databaseURL: string;
   redisURL?: string;
+
+  sendgrid: {
+    apiKey: string;
+    from: string;
+    inviteTemplate: string;
+  };
 
   isProduction: boolean;
 }
@@ -40,8 +48,16 @@ export function loadConfig (): void {
 
     appKeys: getEnvVar('APP_KEYS').split(','),
 
+    appURL: getEnvVar('APP_URL').replace(/\/$/, ''),
+
     databaseURL: getEnvVar('DATABASE_URL'),
     redisURL: getEnvVar('REDIS_URL', null) ?? undefined,
+
+    sendgrid: {
+      apiKey: getEnvVar('SENDGRID_API_KEY'),
+      from: getEnvVar('SENDGRID_FROM'),
+      inviteTemplate: getEnvVar('SENDGRID_INVITE_TEMPLATE')
+    },
 
     isProduction: process.env.NODE_ENV === 'production'
   }

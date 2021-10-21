@@ -26,6 +26,7 @@ export function buildRouter (): express.Router {
   router.patch('/documents/:id', documentController.update)
   router.delete('/documents/:id', documentController.delete)
   router.get('/documents/:id/pdf', documentController.renderPDF)
+  router.post('/documents/:id/invite', documentController.inviteUser)
 
   return router
 }
