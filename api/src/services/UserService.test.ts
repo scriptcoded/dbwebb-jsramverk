@@ -21,7 +21,7 @@ beforeAll(async () => {
 })
 
 beforeEach(() => {
-  userService = new UserService()
+  userService = new UserService({} as any)
 })
 
 test('createUser should create user', async () => {

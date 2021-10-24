@@ -22,7 +22,7 @@ export interface FindUserWithPasswordInput {
 export class UserService {
   constructor (
     private documentService: DocumentService
-  ) { }
+  ) { }
 
   async createUser (data: CreateUserInput): Promise<User> {
     const password = await argon2.hash(data.password)
@@ -33,7 +33,9 @@ export class UserService {
         password
       })
 
-      await this.documentService.addUserWithToken(user._id, data.invitationToken)
+      if (data.invitationToken) {
+        await this.documentService.addUserWithToken(user._id, data.invitationToken)
+      }
 
       return user
     } catch (e) {

@@ -17,7 +17,11 @@ beforeEach(() => {
 test('should load config', () => {
   process.env.PORT = '4000'
   process.env.APP_KEYS = 'x'
+  process.env.APP_URL = 'x'
   process.env.DATABASE_URL = 'x'
+  process.env.SENDGRID_API_KEY = 'x'
+  process.env.SENDGRID_FROM = 'x'
+  process.env.SENDGRID_INVITE_TEMPLATE = 'x'
 
   loadConfig()
 
