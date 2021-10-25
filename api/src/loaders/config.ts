@@ -44,7 +44,7 @@ function getEnvVar <T = string> (name: string, fallback?: T) {
 
 export function loadConfig (): void {
   const config: Config = {
-    port: getEnvVar('PORT'),
+    port: getEnvVar('PORT', '4000'),
 
     appKeys: getEnvVar('APP_KEYS').split(','),
 
