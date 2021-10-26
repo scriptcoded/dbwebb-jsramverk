@@ -29,7 +29,7 @@ const emitEditorContent = (editor: Editor) => {
 const emitEditorMeta = (editor: Editor) => {
   const wordCount = editor.state.doc.textContent
     .trim()
-    .split(/\s+/)
+    .split(/[\s\n]+/)
     .length
 
   emit('update:characterCount', editor.getCharacterCount())
