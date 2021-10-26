@@ -4,17 +4,17 @@ REST är en väletablerad API-arkitektur som de flesta utvecklare känner till.
 Strukturen i ett REST-API är standardiserad, och av denna anledning kan man ofta
 lista ut vilka endpoints man kan behöva använda för i princip vilket API som
 helst. Detta är både RESTs största styrka och svaghet. Upplägget gör att man
-ofta kan behöva göra många stegrade anrop för att samla den information som krävs för ett
-visst ändamål, och ofta får man stora mängder data, även om man bara behöver ett
-eller två fält. Effekten blir speciellt påtaglig på den moderna webben där
-användare förväntar sig snabba sidor, och webbläsaren begränsar antalet
-simultana anrop. Det är här GraphQL kommer in i bilden.
+ofta kan behöva göra många stegrade anrop för att samla den information som
+krävs för ett visst ändamål, och ofta får man stora mängder data, även om man
+bara behöver ett eller två fält. Effekten blir speciellt påtaglig på den moderna
+webben där användare förväntar sig snabba sidor, och webbläsaren begränsar
+antalet simultana anrop. Det är här GraphQL kommer in i bilden.
 
 Bilden nedan visar ett vattenfallsdiagram över ett antal REST-anrop. Stegringen
 beror på att varje anrop bygger på resultatet av de tidigare anropen.
 
-![Stegrade REST-anrop](rest-stagger.png)
-<small>Ett diagram som visar stegrade REST-anrop</small>
+![Stegrade REST-anrop](rest-stagger.png) <small>Ett diagram som visar stegrade
+REST-anrop</small>
 
 GraphQL är ett relativt nytt API-format som hjälper oss med samtliga problem vi
 nämnt ovan. Anrop till ett GraphQL-API görs alltid med ett POST-anrop till en
