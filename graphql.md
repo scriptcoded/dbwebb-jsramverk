@@ -13,8 +13,9 @@ antalet simultana anrop. Det är här GraphQL kommer in i bilden.
 Bilden nedan visar ett vattenfallsdiagram över ett antal REST-anrop. Stegringen
 beror på att varje anrop bygger på resultatet av de tidigare anropen.
 
-![Stegrade REST-anrop](rest-stagger.png) <small>Ett diagram som visar stegrade
-REST-anrop</small>
+![Stegrade REST-anrop](rest-stagger.png)
+<br>
+<sub>Ett diagram som visar stegrade REST-anrop</sub>
 
 GraphQL är ett relativt nytt API-format som hjälper oss med samtliga problem vi
 nämnt ovan. Anrop till ett GraphQL-API görs alltid med ett POST-anrop till en
@@ -212,6 +213,8 @@ klurigt, men det finns bra verktyg byggda på introspection-API't som låter oss
 utforska ett GraphQL-API grafiskt, t.ex. GraphiQL.
 
 ![GraphiQL](graphiql.png)
+<br>
+<sub>En skärmdump av GraphiQL</sub>
 
 Förhoppningsvis har du nu en bättre överblick av GraphQL och vilka fördelar det
 har över REST.
