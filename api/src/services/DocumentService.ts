@@ -255,7 +255,6 @@ export class DocumentService {
         const html = `
         <html>
           <head>
-            <!-- <link rel="stylesheet" href="style.css"> -->
             <style>${style}</style>
           </head>
           <body>
